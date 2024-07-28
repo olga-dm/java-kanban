@@ -2,75 +2,143 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    public ArrayList<Task> getTasks() {
+    public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
+    }
+
+    public ArrayList<Epic> getAllEpics() {
+        return new ArrayList<>(epics.values());
+    }
+
+    public ArrayList<Subtask> getAllSubtasks() {
+        return new ArrayList<>(subtasks.values());
     }
 
     public void removeAllTasks() {
         tasks.clear();
     }
 
+    public void removeAllEpics() {
+        epics.clear();
+    }
+
+    public void removeAllSubtasks() {
+        subtasks.clear();
+    }
+
     public Task getTask(int id) {
         return tasks.get(id);
     }
+    public Epic getEpic(int id) {
+        return epics.get(id);
+    }
+    public Subtask getSubtask(int id) {
+        return subtasks.get(id);
+    }
 
-    public void addTask(Task task) {
+    public void add(Task task) {
         tasks.put(task.getId(), task);
     }
 
-    public void updateTask(Task task) {
+    public void add(Epic epic) {
+        epics.put(epic.getId(), epic);
+    }
 
-        if (tasks.containsKey(task.getId())) {
-            tasks.put(task.getId(), task);
-        } else {
-            System.out.println("Такого идентификатора нет");
+    public void add(Subtask subtask) {
+        subtasks.put(subtask.getId(), subtask);
+    }
+
+    public void update(Task task) {
+        if (!tasks.containsKey(task.getId())) {
+            System.out.println("Task not found");
             return;
         }
-        if (task.getClass() == Subtask.class) {
-            var epic = tasks.get(((Subtask) task).getEpicID());
-            var subtasks = getSubtasks(epic.getId());
-            var isNew = subtasks.stream().allMatch(st -> st.getStatus() == TaskStatus.NEW);
-            var isDone = subtasks.stream().allMatch(st -> st.getStatus() == TaskStatus.DONE);
-            if (isNew) {
-                epic.setStatus(TaskStatus.NEW);
-            } else if (isDone) {
-                epic.setStatus(TaskStatus.DONE);
-            } else {
-                epic.setStatus(TaskStatus.IN_PROGRESS);
-            }
-        }
+        tasks.put(task.getId(), task);
+    }
 
-        if (task.getClass() == Epic.class) {
-            var epic = tasks.get(task.getId());
-            var subtasks = getSubtasks(epic.getId());
-            if (subtasks.isEmpty()) {
-                epic.setStatus(TaskStatus.NEW);
-            }
+    public void update(Epic epic) {
+        if (!epics.containsKey(epic.getId())) {
+            System.out.println("Epic not found");
+            return;
         }
+        epics.put(epic.getId(), epic);
+        updateEpicStatus(epic.getId());
+    }
 
+    public void update(Subtask subtask) {
+        if (!subtasks.containsKey(subtask.getId())) {
+            System.out.println("Subtask not found");
+            return;
+        }
+        subtasks.put(subtask.getId(), subtask);
+        updateEpicStatus(subtask.getEpicID());
     }
 
     public void removeTask(int id) {
-        var task = tasks.get(id);
-        if (task.getClass() == Epic.class) {
-            var subtasks = ((Epic) task).getSubtasks();
-            for (var subtask : subtasks) {
-                tasks.remove(subtask);
-            }
+        if (!tasks.containsKey(id)) {
+            System.out.println("Task not found");
+            return;
         }
         tasks.remove(id);
     }
 
-    public ArrayList<Subtask> getSubtasks(int epicID) {
-        var epic = (Epic) tasks.get(epicID);
+    public void removeEpic(int id) {
+        if (!epics.containsKey(id)) {
+            System.out.println("Epic not found");
+            return;
+        }
+        var epic = epics.get(id);
+        var epicSubtasks = epic.getSubtasks();
+        for (var subtask : epicSubtasks) {
+            subtasks.remove(subtask);
+        }
+        epics.remove(id);
+    }
+
+    public void removeSubtask(int id) {
+        if (!subtasks.containsKey(id)) {
+            System.out.println("Subtask not found");
+            return;
+        }
+        var subtask = subtasks.get(id);
+
+        subtasks.remove(id);
+        updateEpicStatus(subtask.getEpicID());
+    }
+
+    private ArrayList<Subtask> getSubtasks(Epic epic) {
         var result = new ArrayList<Subtask>();
         for (int id : epic.getSubtasks()) {
-            if (tasks.containsKey(id)) {
-                result.add((Subtask) tasks.get(id));
+            if (subtasks.containsKey(id)) {
+                result.add(subtasks.get(id));
             }
         }
         return result;
     }
+
+    private void updateEpicStatus(int id) {
+        var epic = epics.get(id);
+        if (epic.getSubtasks().isEmpty()) {
+            epic.setStatus(TaskStatus.NEW);
+            return;
+        }
+
+        var epicSubtasks = getSubtasks(epic);
+        var isNew = epicSubtasks.stream().allMatch(st -> st.getStatus() == TaskStatus.NEW);
+        if (isNew) {
+            epic.setStatus(TaskStatus.NEW);
+            return;
+        }
+        var isDone = epicSubtasks.stream().allMatch(st -> st.getStatus() == TaskStatus.DONE);
+        if (isDone) {
+            epic.setStatus(TaskStatus.DONE);
+            return;
+        }
+        epic.setStatus(TaskStatus.IN_PROGRESS);
+    }
+
 }
