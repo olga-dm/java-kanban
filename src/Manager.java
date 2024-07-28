@@ -24,10 +24,14 @@ public class Manager {
 
     public void removeAllEpics() {
         epics.clear();
+        subtasks.clear();
     }
 
     public void removeAllSubtasks() {
         subtasks.clear();
+        for (var epic : epics.values()) {
+            epic.setStatus(TaskStatus.NEW);
+        }
     }
 
     public Task getTask(int id) {
@@ -40,6 +44,9 @@ public class Manager {
         return subtasks.get(id);
     }
 
+    /*генерация id происходит при создании объекта в классе Task
+    Тем самым решается проблема, если пользозователь создаст несколько менеджеров
+    Решение в подсказке к ПР с счетчиком в TaskManager не является потокобезопасным */
     public void add(Task task) {
         tasks.put(task.getId(), task);
     }
@@ -110,8 +117,9 @@ public class Manager {
         updateEpicStatus(subtask.getEpicID());
     }
 
-    private ArrayList<Subtask> getSubtasks(Epic epic) {
+    private ArrayList<Subtask> getSubtasks(int epicId) {
         var result = new ArrayList<Subtask>();
+        var epic = epics.get(epicId);
         for (int id : epic.getSubtasks()) {
             if (subtasks.containsKey(id)) {
                 result.add(subtasks.get(id));
@@ -127,7 +135,7 @@ public class Manager {
             return;
         }
 
-        var epicSubtasks = getSubtasks(epic);
+        var epicSubtasks = getSubtasks(id);
         var isNew = epicSubtasks.stream().allMatch(st -> st.getStatus() == TaskStatus.NEW);
         if (isNew) {
             epic.setStatus(TaskStatus.NEW);
