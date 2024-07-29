@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Manager {
+    private static final AtomicInteger atomicID = new AtomicInteger();
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
@@ -44,9 +46,18 @@ public class Manager {
         return subtasks.get(id);
     }
 
-    /*генерация id происходит при создании объекта в классе Task
-    Тем самым решается проблема, если пользозователь создаст несколько менеджеров
-    Решение в подсказке к ПР с счетчиком в TaskManager не является потокобезопасным  */
+    public static Task createTask(String name, String description) {
+        return new Task(getId(), name, description);
+    }
+
+    public static Epic createEpic(String name, String description) {
+        return new Epic(getId(), name, description);
+    }
+
+    public static Subtask createSubtask(String name, String description, int epicId) {
+        return new Subtask(getId(), name, description, epicId);
+    }
+
     public void add(Task task) {
         tasks.put(task.getId(), task);
     }
@@ -149,4 +160,7 @@ public class Manager {
         epic.setStatus(TaskStatus.IN_PROGRESS);
     }
 
+    private static int getId(){
+        return atomicID.incrementAndGet();
+    }
 }

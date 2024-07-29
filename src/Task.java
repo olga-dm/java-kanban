@@ -1,9 +1,6 @@
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Task {
-    private static final AtomicInteger atomicID = new AtomicInteger();
-
     protected String name;
     protected String description;
     protected int id;
@@ -29,8 +26,8 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name, String description) {
-        this.id = atomicID.incrementAndGet();
+    public Task(int id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;

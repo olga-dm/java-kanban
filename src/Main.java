@@ -3,13 +3,13 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        Task taskOne = new Task( "One", "First Task");
-        Task taskTwo = new Task( "Two", "Second Task");
-        Epic epic = new Epic("Epic", "First Epic Task");
-        Subtask subtaskOne = new Subtask("Subtask", "First Subtask", epic.id);
-        Subtask subtaskTwo = new Subtask("Subtask", "Second Subtask", epic.id);
-        Epic epicTwo = new Epic("Epic", "Second Epic Task");
-        Subtask subtaskThree = new Subtask("Subtask", "Third Subtask", epicTwo.id);
+        Task taskOne = Manager.createTask( "One", "First Task");
+        Task taskTwo = Manager.createTask( "Two", "Second Task");
+        Epic epic = Manager.createEpic("Epic", "First Epic Task");
+        Subtask subtaskOne = Manager.createSubtask("Subtask", "First Subtask", epic.id);
+        Subtask subtaskTwo = Manager.createSubtask("Subtask", "Second Subtask", epic.id);
+        Epic epicTwo = Manager.createEpic("Epic", "Second Epic Task");
+        Subtask subtaskThree = Manager.createSubtask("Subtask", "Third Subtask", epicTwo.id);
 
         epic.addSubtask(subtaskOne.id);
         epic.addSubtask(subtaskTwo.id);
