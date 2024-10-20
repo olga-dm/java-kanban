@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
@@ -43,4 +45,22 @@ class InMemoryHistoryManagerTest {
         assertEquals(task1.getStatus(), savedTask.getStatus());
     }
 
+    @Test
+    public void shouldReturnTrueIfHistoryHaveCorrectOrder() {
+        Task task1 = manager.createTask("MemoryOne", "First Task");
+        Task task2 = manager.createTask("MemoryTwo", "Second Task");
+
+        manager.add(task1);
+        manager.add(task2);
+
+        manager.getTask(task1.getId());
+        manager.getTask(task2.getId());
+        manager.getTask(task1.getId());
+
+        List<Task> history = manager.historyList();
+
+        assertEquals(2, history.size(), "История должна содержать 2 задачи без дубликатов.");
+        assertEquals(task2, history.get(0), "Первая задача должна быть task2.");
+        assertEquals(task1, history.get(1), "Вторая задача должна быть task1.");
+    }
 }

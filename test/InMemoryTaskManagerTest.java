@@ -67,7 +67,9 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldReturnSubtaskIfRealContainsSubtasks() throws Exception {
-        Subtask subTask1 = manager.createSubtask("Subtusk", "Description1", 3);
+        Epic epic1 = manager.createEpic("Epic1", "Description1");
+        manager.add(epic1);
+        Subtask subTask1 = manager.createSubtask("Subtusk", "Description1", epic1.getId());
         manager.add(subTask1);
         Subtask resultTusk = manager.getSubtask(subTask1.getId());
         assertEquals(subTask1, resultTusk);
