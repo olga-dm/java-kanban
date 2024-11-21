@@ -9,8 +9,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBackedTaskManagerTest {
-    TaskManager inMemoryTaskManager = Managers.getDefault();
-
     private FileBackedTaskManager fileBackedTaskManager;
     private File file;
 
