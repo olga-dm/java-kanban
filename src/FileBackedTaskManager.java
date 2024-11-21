@@ -7,26 +7,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public FileBackedTaskManager(File file) {
         this.file = file;
-        createFileIfNotExists(); // Создаем файл, если он не существует
-        loadFromFile();
     }
 
-    private void createFileIfNotExists() {
-        try {
-            if (!file.exists()) {
-                file.createNewFile(); // Создаем новый файл
-            }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Не удалось создать файл: " + file.getPath(), e);
-        }
-    }
-
-    private void loadFromFile() {
-        // Проверяем, существует ли файл
-        if (!file.exists()) {
-            return; // Если файл не существует, выходим из метода
-        }
-
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
         try {
             String content = Files.readString(file.toPath());
             String[] lines = content.split(System.lineSeparator());
@@ -49,18 +33,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 switch (taskType) {
                     case "TASK":
                         Task task = new Task(id, parts[2], parts[3]);
-                        add(task);
+                        manager.add(task);
                         break;
                     case "EPIC":
                         Epic epic = new Epic(id, parts[2], parts[3]);
-                        add(epic);
+                        manager.add(epic);
                         break;
                     case "SUBTASK":
                         if (parts.length != 6) {
                             throw new ManagerSaveException("Неверное количество полей для подзадачи: " + line);
                         }
                         Subtask subtask = new Subtask(id, parts[2], parts[3], Integer.parseInt(parts[5]));
-                        add(subtask);
+                        manager.add(subtask);
                         break;
                     default:
                         throw new ManagerSaveException("Неизвестный тип задачи: " + taskType);
@@ -73,9 +57,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (Exception e) {
             throw new ManagerSaveException("Неизвестная ошибка при загрузке задач: " + e.getMessage(), e);
         }
+        return manager;
     }
 
-    private void saveToFile() {
+    public void saveToFile() {
         try {
             StringBuilder content = new StringBuilder();
 
