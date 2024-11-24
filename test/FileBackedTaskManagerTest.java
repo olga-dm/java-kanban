@@ -52,7 +52,6 @@ public class FileBackedTaskManagerTest {
         fileBackedTaskManager.add(task);
         fileBackedTaskManager.add(epic);
         fileBackedTaskManager.add(subtask);
-        fileBackedTaskManager.saveToFile();
         String savedData = Files.readString(file.toPath());
         String expectedData = "id,type,name,description,status\n" +
                 task.getId() + ",TASK,Task1,Description1,NEW\n" +

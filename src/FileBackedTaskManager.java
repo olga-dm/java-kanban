@@ -60,55 +60,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    public void saveToFile() {
-        try {
-            StringBuilder content = new StringBuilder();
-
-            // Записываем заголовки
-            content.append("id,type,name,description,status");
-            content.append(System.lineSeparator());
-
-            // Записываем задачи
-            for (Task task : getAllTasks()) {
-                content.append(task.getId()).append(",")
-                        .append("TASK,")
-                        .append(task.getName()).append(",")
-                        .append(task.getDescription()).append(",")
-                        .append(task.getStatus());
-                content.append(System.lineSeparator());
-            }
-
-            // Записываем эпики
-            for (Epic epic : getAllEpics()) {
-                content.append(epic.getId()).append(",")
-                        .append("EPIC,")
-                        .append(epic.getName()).append(",")
-                        .append(epic.getDescription()).append(",")
-                        .append(epic.getStatus());
-                content.append(System.lineSeparator());
-            }
-
-            // Записываем подзадачи
-            for (Subtask subtask : getAllSubtasks()) {
-                content.append(subtask.getId()).append(",")
-                        .append("SUBTASK,")
-                        .append(subtask.getName()).append(",")
-                        .append(subtask.getDescription()).append(",")
-                        .append(subtask.getStatus()).append(",")
-                        .append(subtask.getEpicID());
-                content.append(System.lineSeparator());
-            }
-
-            // Записываем содержимое в файл
-            Files.writeString(file.toPath(), content.toString());
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранении задач в файл: " + file.getPath(), e);
-        } catch (Exception e) {
-            throw new ManagerSaveException("Неизвестная ошибка при сохранении задач: " + e.getMessage(), e);
-        }
-    }
-
-
     @Override
     public void add(Task task) {
         super.add(task);
@@ -161,5 +112,53 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public void removeSubtask(int id) {
         super.removeSubtask(id);
         saveToFile();
+    }
+
+    private void saveToFile() {
+        try {
+            StringBuilder content = new StringBuilder();
+
+            // Записываем заголовки
+            content.append("id,type,name,description,status");
+            content.append(System.lineSeparator());
+
+            // Записываем задачи
+            for (Task task : getAllTasks()) {
+                content.append(task.getId()).append(",")
+                        .append("TASK,")
+                        .append(task.getName()).append(",")
+                        .append(task.getDescription()).append(",")
+                        .append(task.getStatus());
+                content.append(System.lineSeparator());
+            }
+
+            // Записываем эпики
+            for (Epic epic : getAllEpics()) {
+                content.append(epic.getId()).append(",")
+                        .append("EPIC,")
+                        .append(epic.getName()).append(",")
+                        .append(epic.getDescription()).append(",")
+                        .append(epic.getStatus());
+                content.append(System.lineSeparator());
+            }
+
+            // Записываем подзадачи
+            for (Subtask subtask : getAllSubtasks()) {
+                content.append(subtask.getId()).append(",")
+                        .append("SUBTASK,")
+                        .append(subtask.getName()).append(",")
+                        .append(subtask.getDescription()).append(",")
+                        .append(subtask.getStatus()).append(",")
+                        .append(subtask.getEpicID());
+                content.append(System.lineSeparator());
+            }
+
+            // Записываем содержимое в файл
+            Files.writeString(file.toPath(), content.toString());
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при сохранении задач в файл: " + file.getPath(), e);
+        } catch (Exception e) {
+            throw new ManagerSaveException("Неизвестная ошибка при сохранении задач: " + e.getMessage(), e);
+        }
     }
 }
