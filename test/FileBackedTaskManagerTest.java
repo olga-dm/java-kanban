@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,9 +48,9 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void shouldTasksSaveToFile() throws Exception {
-        Task task = new Task(1, "Task1", "Description1");
+        Task task = new Task(1, "Task1", "Description1", Duration.ofHours(8), LocalDateTime.of(2025, 5, 17, 14, 26));
         Epic epic = new Epic(2, "Epic1", "DescriptionEpic1");
-        Subtask subtask = new Subtask(3, "Subtask 1", "Subtask 1 Description", 2);
+        Subtask subtask = new Subtask(3, "Subtask 1", "Subtask 1 Description", 2, Duration.ofHours(10), LocalDateTime.of(2025, 5, 8, 11, 35));
         fileBackedTaskManager.add(task);
         fileBackedTaskManager.add(epic);
         fileBackedTaskManager.add(subtask);

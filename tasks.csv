@@ -1,0 +1,8 @@
+id,type,name,description,status
+1,TASK,One,First Task,NEW,15,2022-12-30T00:30
+2,TASK,Two,Second Task,NEW,220,2024-11-21T01:30
+3,EPIC,Epic,First Epic Task,NEW,81,2025-01-12T10:30
+6,EPIC,Epic,Second Epic Task,NEW,60,2025-01-12T10:30
+4,SUBTASK,Subtask,First Subtask,NEW,3,21,2025-10-21T15:30
+5,SUBTASK,Subtask,Second Subtask,NEW,3,60,2025-01-12T10:30
+7,SUBTASK,Subtask,Third Subtask,NEW,6,60,2025-01-12T10:30

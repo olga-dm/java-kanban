@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -23,7 +25,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
 
                 String[] parts = line.split(",");
-                if (parts.length < 5) {
+                if (parts.length < 7) {
                     throw new ManagerSaveException("Неверное количество полей в строке: " + line);
                 }
 
@@ -32,7 +34,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 switch (taskType) {
                     case "TASK":
-                        Task task = new Task(id, parts[2], parts[3]);
+                        Task task = new Task(id, parts[2], parts[3], Duration.parse(parts[4]), LocalDateTime.parse(parts[5]));
                         manager.add(task);
                         break;
                     case "EPIC":
@@ -40,10 +42,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         manager.add(epic);
                         break;
                     case "SUBTASK":
-                        if (parts.length != 6) {
+                        if (parts.length != 8) {
                             throw new ManagerSaveException("Неверное количество полей для подзадачи: " + line);
                         }
-                        Subtask subtask = new Subtask(id, parts[2], parts[3], Integer.parseInt(parts[5]));
+                        Subtask subtask = new Subtask(id, parts[2], parts[3], Integer.parseInt(parts[5]), Duration.parse(parts[6]), LocalDateTime.parse(parts[7]));
                         manager.add(subtask);
                         break;
                     default:
@@ -128,7 +130,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         .append("TASK,")
                         .append(task.getName()).append(",")
                         .append(task.getDescription()).append(",")
-                        .append(task.getStatus());
+                        .append(task.getStatus()).append(",")
+                        .append(task.getDuration().toMinutes()).append(",")
+                        .append(task.getStartTime());
                 content.append(System.lineSeparator());
             }
 
@@ -138,7 +142,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         .append("EPIC,")
                         .append(epic.getName()).append(",")
                         .append(epic.getDescription()).append(",")
-                        .append(epic.getStatus());
+                        .append(epic.getStatus()).append(",")
+                        .append(epic.getDuration().toMinutes()).append(",")
+                        .append(epic.getStartTime());
                 content.append(System.lineSeparator());
             }
 
@@ -149,7 +155,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         .append(subtask.getName()).append(",")
                         .append(subtask.getDescription()).append(",")
                         .append(subtask.getStatus()).append(",")
-                        .append(subtask.getEpicID());
+                        .append(subtask.getEpicID()).append(",")
+                        .append(subtask.getDuration().toMinutes()).append(",")
+                        .append(subtask.getStartTime());
                 content.append(System.lineSeparator());
             }
 
