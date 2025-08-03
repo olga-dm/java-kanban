@@ -1,4 +1,6 @@
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -6,27 +8,22 @@ public class Main {
         System.out.println("Поехали!");
         HistoryManager historyManager = Managers.getDefaultHistory();
         FileBackedTaskManager manager = new FileBackedTaskManager(new File("tasks.csv"));
+        Task taskOne = new Task("One", "First Task", Duration.ofMinutes(15), LocalDateTime.of(2022, 12, 30, 0, 30));
+        manager.createTask(taskOne);
+        Task taskTwo = new Task("Two", "Second Task", Duration.ofMinutes(220), LocalDateTime.of(2024, 11, 21, 1, 30));
+        manager.createTask(taskTwo);
+        Epic epic = new Epic("Epic", "First Epic Task");
+        manager.createEpic(epic);
+        Subtask subtaskOne = new Subtask("Subtask", "First Subtask", epic.id, Duration.ofMinutes(21), LocalDateTime.of(2025, 10, 21, 15, 30));
+        manager.createSubtask(subtaskOne);
+        Subtask subtaskTwo = new Subtask("Subtask", "Second Subtask", epic.id, Duration.ofMinutes(60), LocalDateTime.of(2025, 1, 12, 10, 30));
+        manager.createSubtask(subtaskTwo);
+        Epic epicTwo = new Epic("Epic", "Second Epic Task");
+        manager.createEpic(epicTwo);
+        Subtask subtaskThree = new Subtask("Subtask", "Third Subtask", epicTwo.id, Duration.ofMinutes(60), LocalDateTime.of(2025, 1, 12, 10, 30));
+        manager.createSubtask(subtaskThree);
 
-        Task taskOne = manager.createTask("One", "First Task");
-        Task taskTwo = manager.createTask("Two", "Second Task");
-        Epic epic = manager.createEpic("Epic", "First Epic Task");
-        Subtask subtaskOne = manager.createSubtask("Subtask", "First Subtask", epic.id);
-        Subtask subtaskTwo = manager.createSubtask("Subtask", "Second Subtask", epic.id);
-        Epic epicTwo = manager.createEpic("Epic", "Second Epic Task");
-        Subtask subtaskThree = manager.createSubtask("Subtask", "Third Subtask", epicTwo.id);
-
-        epic.addSubtask(subtaskOne.id);
-        epic.addSubtask(subtaskTwo.id);
-        epicTwo.addSubtask(subtaskThree.id);
-
-        manager.add(taskOne);
-        manager.add(taskTwo);
-        manager.add(epic);
-        manager.add(epicTwo);
-        manager.add(subtaskOne);
-        manager.add(subtaskTwo);
-        manager.add(subtaskThree);
-
+        var a = manager.getPrioritizedTasks().stream().map(Task::getStartTime).toArray();
         printAllTasks(manager, historyManager);
     }
 
