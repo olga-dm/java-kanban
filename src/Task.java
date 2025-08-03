@@ -10,7 +10,25 @@ public class Task implements Comparable<Task> {
 
     protected Duration duration;
     protected LocalDateTime startTime;
-    private LocalDateTime endTime;
+    protected LocalDateTime endTime;
+
+    public Task(int id, String name, String description, Duration duration, LocalDateTime startTime) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.duration = duration;
+        this.startTime = startTime != null ? startTime : LocalDateTime.now();
+    }
+
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.duration = duration;
+        this.startTime = startTime != null ? startTime : LocalDateTime.now();
+    }
+
 
     public String getName() {
         return name;
@@ -73,15 +91,6 @@ public class Task implements Comparable<Task> {
         if (duration == null)
             return Duration.ZERO;
         return duration;
-    }
-
-    public Task(int id, String name, String description, Duration duration, LocalDateTime startTime) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.status = TaskStatus.NEW;
-        this.duration = duration;
-        this.startTime = startTime != null ? startTime : LocalDateTime.now();
     }
 
     @Override

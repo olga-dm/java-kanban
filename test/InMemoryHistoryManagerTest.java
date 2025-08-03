@@ -13,34 +13,29 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     public void init() throws Exception {
         manager = (InMemoryTaskManager) Managers.getDefault();
-        Task taskOne = manager.createTask("One", "First Task", Duration.ofMinutes(124), LocalDateTime.of(2025, 5, 21, 1, 30));
-        Task taskTwo = manager.createTask("Two", "Second Task", Duration.ofMinutes(200), LocalDateTime.of(2025, 5, 6, 12, 30));
-        Epic epic = manager.createEpic("Epic", "First Epic Task");
-        Subtask subtaskOne = manager.createSubtask("Subtask", "First Subtask", epic.id, Duration.ofMinutes(345), LocalDateTime.of(2025, 5, 2, 15, 30));
-        Subtask subtaskTwo = manager.createSubtask("Subtask", "Second Subtask", epic.id, Duration.ofMinutes(456), LocalDateTime.of(2025, 3, 21, 13, 45));
-        Epic epicTwo = manager.createEpic("Epic", "Second Epic Task");
-        Subtask subtaskThree = manager.createSubtask("Subtask", "Third Subtask", epicTwo.id, Duration.ofMinutes(60), LocalDateTime.of(2025, 5, 22, 10, 31));
-
-        epic.addSubtask(subtaskOne);
-        epic.addSubtask(subtaskTwo);
-        epicTwo.addSubtask(subtaskThree);
-
-        manager.add(taskOne);
-        manager.add(taskTwo);
-        manager.add(epic);
-        manager.add(epicTwo);
-        manager.add(subtaskOne);
-        manager.add(subtaskTwo);
-        manager.add(subtaskThree);
+        Task taskOne = new Task("One", "First Task", Duration.ofMinutes(15), LocalDateTime.of(2022, 12, 30, 0, 30));
+        manager.createTask(taskOne);
+        Task taskTwo = new Task("Two", "Second Task", Duration.ofMinutes(220), LocalDateTime.of(2024, 11, 21, 1, 30));
+        manager.createTask(taskTwo);
+        Epic epic = new Epic("Epic", "First Epic Task");
+        manager.createEpic(epic);
+        Subtask subtaskOne = new Subtask("Subtask", "First Subtask", epic.id, Duration.ofMinutes(21), LocalDateTime.of(2025, 10, 21, 15, 30));
+        manager.createSubtask(subtaskOne);
+        Subtask subtaskTwo = new Subtask("Subtask", "Second Subtask", epic.id, Duration.ofMinutes(60), LocalDateTime.of(2025, 1, 12, 10, 30));
+        manager.createSubtask(subtaskTwo);
+        Epic epicTwo = new Epic("Epic", "Second Epic Task");
+        manager.createEpic(epicTwo);
+        Subtask subtaskThree = new Subtask("Subtask", "Third Subtask", epicTwo.id, Duration.ofMinutes(60), LocalDateTime.of(2025, 1, 12, 10, 30));
+        manager.createSubtask(subtaskThree);
     }
 
     @Test
     public void shouldReturnTrueIfSavedTaskState() {
         Task task1 = manager.getTask(1);
-        Task task1Update = new Task(1, "Task1Update", "Description1Update", Duration.ofHours(1), LocalDateTime.of(2025, 1, 17, 14, 26));
+        Task task1Update = new Task(task1.getId(), "Task1Update", "Description1Update", Duration.ofHours(1), LocalDateTime.of(2025, 11, 17, 14, 26));
         manager.update(task1Update);
         manager.getTask(task1Update.getId());
-        Task savedTask = manager.historyList().getFirst();
+        Task savedTask = manager.historyList().getLast();
         assertEquals(task1.getId(), savedTask.getId());
         assertEquals(task1.getName(), savedTask.getName());
         assertEquals(task1.getDescription(), savedTask.getDescription());
@@ -49,11 +44,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     public void shouldReturnTrueIfHistoryHaveCorrectOrder() {
-        Task task1 = manager.createTask("MemoryOne", "First Task", Duration.ofMinutes(100), LocalDateTime.of(2025, 5, 21, 17, 0));
-        Task task2 = manager.createTask("MemoryTwo", "Second Task", Duration.ofMinutes(23), LocalDateTime.of(2025, 5, 19, 18, 10));
+        Task task1 = new Task("MemoryOne", "First Task", Duration.ofMinutes(100), LocalDateTime.of(2025, 5, 21, 17, 0));
+        manager.createTask(task1);
+        Task task2 = new Task("MemoryTwo", "Second Task", Duration.ofMinutes(23), LocalDateTime.of(2025, 5, 19, 18, 10));
+        manager.createTask(task2);
 
-        manager.add(task1);
-        manager.add(task2);
 
         manager.getTask(task1.getId());
         manager.getTask(task2.getId());

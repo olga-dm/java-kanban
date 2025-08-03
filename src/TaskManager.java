@@ -1,5 +1,3 @@
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -42,11 +40,11 @@ public interface TaskManager {
 
     List<Subtask> getEpicSubtasks(int epicId);
 
-    Task createTask(String name, String description, Duration duration, LocalDateTime startTime);
+    Task createTask(Task task);
 
-    Epic createEpic(String name, String description);
+    Epic createEpic(Epic epic);
 
-    Subtask createSubtask(String name, String description, int epicId, Duration duration, LocalDateTime startTime);
+    Subtask createSubtask(Subtask subtask);
 
     TreeSet<Task> getPrioritizedTasks();
 }
